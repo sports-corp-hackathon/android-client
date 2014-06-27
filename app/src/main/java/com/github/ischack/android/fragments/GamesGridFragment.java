@@ -1,10 +1,12 @@
-package com.github.ischack.android;
+package com.github.ischack.android.fragments;
 
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.github.ischack.android.R;
 
 /**
  *

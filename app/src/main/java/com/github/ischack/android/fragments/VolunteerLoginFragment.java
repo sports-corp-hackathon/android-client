@@ -1,4 +1,4 @@
-package com.github.ischack.android;
+package com.github.ischack.android.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.github.ischack.android.R;
 import com.github.ischack.android.helpers.EmailTextWatcher;
 
 /**
