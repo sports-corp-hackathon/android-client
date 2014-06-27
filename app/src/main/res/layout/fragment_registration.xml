@@ -1,0 +1,50 @@
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:padding="20dp"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register"
+        android:enabled="false"
+        android:id="@+id/btn_register"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/etxt_email"
+        android:textSize="25sp"
+        android:hint="Email"
+        android:singleLine="true"
+        android:imeOptions="actionNext"
+        android:layout_above="@+id/etxt_password"
+        android:layout_centerHorizontal="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:hint="Password"
+        android:layout_above="@+id/btn_register"
+        android:textSize="25sp"
+        android:ems="10"
+        android:id="@+id/etxt_password"
+        android:singleLine="true"
+        android:imeOptions="actionGo"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/etxt_email"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_launcher"
+        />
+
+</RelativeLayout>
