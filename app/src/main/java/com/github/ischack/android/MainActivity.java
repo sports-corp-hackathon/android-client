@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.github.ischack.android.fragments.GamesGridFragment;
 import com.github.ischack.android.fragments.VolunteerLoginFragment;
 
 
@@ -107,21 +108,29 @@ public class MainActivity extends FragmentActivity {
 
         //TODO: Work with different selections to push fragments
         // Create a new fragment and specify the planet to show based on position
-        Fragment fragment = new Fragment();
 
+        Fragment fragment = null;
+        if(position == 0) {
+            fragment = new VolunteerLoginFragment();
+        } else if( position == 1) {
+            fragment = new GamesGridFragment();
+        }
 
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(android.R.id.content, fragment)
-                .commit();
+        if( fragment != null ) {
 
-        // Highlight the selected item, update the title, and close the drawer
-        mDrawerList.setItemChecked(position, true);
+            // Insert the fragment by replacing any existing fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(android.R.id.content, fragment)
+                    .commit();
 
-        setTitle(mDrawerList.getAdapter().getItem(position).toString());
+            // Highlight the selected item, update the title, and close the drawer
+            mDrawerList.setItemChecked(position, true);
 
-        mDrawerLayout.closeDrawer(mDrawerList);
+            setTitle(mDrawerList.getAdapter().getItem(position).toString());
+
+            mDrawerLayout.closeDrawer(mDrawerList);
+        }
     }
 
 
@@ -131,7 +140,7 @@ public class MainActivity extends FragmentActivity {
 
         // Set the adapter for the list view
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, new String[] {"My Teams", "My Games", "My Scores"}));
+                android.R.layout.simple_list_item_1, new String[] {"Login", "Grid"}));
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/gameImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="Game Image" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/overlay"
+        android:layout_alignLeft="@+id/gameImage"
+        android:layout_alignRight="@+id/gameImage"
+        android:layout_alignBottom="@+id/gameImage"
+        android:background="#3FFFFFFF">
+
+        <TextView
+            android:id="@+id/gameName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello World"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
