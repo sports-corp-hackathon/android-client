@@ -8,14 +8,14 @@
         android:id="@+id/gameImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/game_1"
-        android:maxHeight="500dp" />
+        android:src="@drawable/ic_launcher"
+        android:maxHeight="300dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@id/gameImage"
-        android:background="@android:color/darker_gray"
+        android:background="@android:color/white"
         android:text="Game 1"
         android:gravity="center"
         android:textColor="#000000"

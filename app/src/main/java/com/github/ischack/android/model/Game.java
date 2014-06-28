@@ -15,6 +15,8 @@ import java.lang.reflect.ParameterizedType;
  */
 public class Game implements Parcelable {
 
+
+
     public static enum ScoreType {
         TIME, RANK, BOOL, DISTANCE, COUNT;
     }
@@ -72,6 +74,14 @@ public class Game implements Parcelable {
         this.scoreType = scoreType;
     }
 
+    public void setImageUrl(Uri imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public Uri getImageUrl() {
+        return imageUrl;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -88,10 +98,10 @@ public class Game implements Parcelable {
 
 
     private Game(Parcel in) {
-        information = in.readString();
-        rules = in.readString();
-        imageUrl = in.readParcelable(Game.class.getClassLoader());
         name = in.readString();
+        imageUrl = in.readParcelable(Game.class.getClassLoader());
+        rules = in.readString();
+        information = in.readString();
         scoreType = ScoreType.valueOf(in.readString());
     }
 

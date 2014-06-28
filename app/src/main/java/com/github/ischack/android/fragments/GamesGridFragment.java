@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.etsy.android.grid.HeaderViewListAdapter;
 import com.etsy.android.grid.StaggeredGridView;
+import com.github.ischack.android.Dummy;
 import com.github.ischack.android.GameActivity;
 import com.github.ischack.android.R;
 import com.github.ischack.android.adapters.GameGridListAdapter;
@@ -53,7 +54,7 @@ public class GamesGridFragment extends Fragment implements AdapterView.OnItemCli
 
         gridView.setOnItemClickListener(this);
 
-        new GetGameImageTask(mAdapter, getActivity()).execute(new ArrayList<Game>());
+        new GetGameImageTask(mAdapter, getActivity()).execute(Dummy.getDummyGames());
     }
 
     @Override

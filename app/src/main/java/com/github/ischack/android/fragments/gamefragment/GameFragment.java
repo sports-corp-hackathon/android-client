@@ -5,6 +5,8 @@ package com.github.ischack.android.fragments.gamefragment;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -13,13 +15,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.hmspicker.HmsPickerBuilder;
 import com.doomonafireball.betterpickers.hmspicker.HmsPickerDialogFragment;
 import com.github.ischack.android.R;
 import com.github.ischack.android.fragments.FragmentTabsFragmentSupport;
+import com.github.ischack.android.helpers.GameDownloadHelper;
 import com.github.ischack.android.model.Game;
 
 /**
@@ -37,6 +42,8 @@ public class GameFragment extends Fragment {
 
     private boolean promptingScore = false;
 
+
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -52,6 +59,7 @@ public class GameFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
     public GameFragment() {
         // Required empty public constructor
     }
@@ -67,14 +75,33 @@ public class GameFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
         Log.e("ISCHACK", "Inflating the game view...");
         View v = inflater.inflate(R.layout.fragment_game, container, false);
 
+        ((TextView) v.findViewById(R.id.title)).setText(game.getName());
+
+        final ImageView iv = ((ImageView) v.findViewById(R.id.gameImage));
+
+        new AsyncTask<Game, Void, Bitmap>() {
+
+            @Override
+            protected Bitmap doInBackground(Game... params) {
+                Bitmap bm = GameDownloadHelper.downloadImageForGame(getActivity(), params[0]);
+
+                return bm;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+                iv.setImageBitmap(bitmap);
+            }
+        }.execute(game);
 
         return v;
     }
+
+
 
     public void promptScore() {
         if(!promptingScore) {
@@ -89,7 +116,7 @@ public class GameFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Fragment frag = new FragmentTabsFragmentSupport();
+        Fragment frag = FragmentTabsFragmentSupport.newInstance(game);
         getChildFragmentManager().beginTransaction().add(R.id.content, frag, FragmentTabsFragmentSupport.class.getName()).commit();
     }
 
@@ -231,9 +258,6 @@ public class GameFragment extends Fragment {
                 });
                 d3.show();
                 break;
-
         }
-
-
     }
 }

@@ -11,9 +11,33 @@ import com.github.ischack.android.R;
 import com.github.ischack.android.fragments.gamefragment.InfoFragment;
 import com.github.ischack.android.fragments.gamefragment.LeaderboardFragment;
 import com.github.ischack.android.fragments.gamefragment.RulesFragment;
+import com.github.ischack.android.model.Game;
 
 public class FragmentTabsFragmentSupport extends Fragment {
     private FragmentTabHost mTabHost;
+
+    private Game game;
+
+    // TODO: Rename and change types and number of parameters
+    public static FragmentTabsFragmentSupport newInstance(Game game) {
+        FragmentTabsFragmentSupport fragment = new FragmentTabsFragmentSupport();
+        Bundle args = new Bundle();
+        args.putParcelable("game", game);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public FragmentTabsFragmentSupport() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            game = getArguments().getParcelable("game");
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -21,12 +45,15 @@ public class FragmentTabsFragmentSupport extends Fragment {
         mTabHost = new FragmentTabHost(getActivity());
         mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.content);
 
-        mTabHost.addTab(mTabHost.newTabSpec("simple").setIndicator("Leaders"),
-                LeaderboardFragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("contacts").setIndicator("Rules"),
-                RulesFragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("custom").setIndicator("Info"),
-                InfoFragment.class, null);
+        Bundle args = new Bundle();
+        args.putParcelable("game", game);
+
+        mTabHost.addTab(mTabHost.newTabSpec("leaders").setIndicator("Leaders"),
+                LeaderboardFragment.class, args);
+        mTabHost.addTab(mTabHost.newTabSpec("rules").setIndicator("Rules"),
+                RulesFragment.class, args);
+        mTabHost.addTab(mTabHost.newTabSpec("info").setIndicator("Info"),
+                InfoFragment.class, args);
 
         return mTabHost;
     }
