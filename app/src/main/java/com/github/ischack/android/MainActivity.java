@@ -1,21 +1,46 @@
 package com.github.ischack.android;
 
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.nfc.NfcAdapter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.github.ischack.android.fragments.GamesGridFragment;
 import com.github.ischack.android.fragments.VolunteerLoginFragment;
+import com.github.ischack.android.helpers.NfcUtils;
+import com.github.ischack.android.model.Game;
+import com.github.ischack.android.model.GameScore;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends FragmentActivity {
@@ -33,9 +58,102 @@ public class MainActivity extends FragmentActivity {
 
         initDrawer();
 
+        if(!getSharedPreferences("profile", MODE_PRIVATE).contains("user_type"))
+            getSharedPreferences("profile", MODE_PRIVATE).edit().putString("user_type", "basic").apply();
 
-        getSupportFragmentManager().beginTransaction().add(android.R.id.content, new VolunteerLoginFragment(), VolunteerLoginFragment.class.getName()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.content, new WelcomeFragment(), WelcomeFragment.class.getName()).commit();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        super.onResume();
+        Log.e("ISCHACK", "Action: " + getIntent().getAction());
+
+        Bundle bundle = getIntent().getExtras();
+
+        if(bundle.containsKey(NfcAdapter.EXTRA_ID)) {
+            Log.d("NFC", NfcUtils.ByteArrayToHexString(bundle.getByteArray(NfcAdapter.EXTRA_ID)));
+
+            //TODO: Get the scores for the user here.
+            new AsyncTask<Void, Void, List<GameScore>>() {
+
+                @Override
+                protected List<GameScore> doInBackground(Void... params) {
+
+                    List<GameScore> scores = new ArrayList<GameScore>();
+
+                    HttpGet httpget = new HttpGet("http://echo.jsontest.com/game/object/score/124134");
+
+                    HttpClient client = new DefaultHttpClient();
+
+                    HttpResponse response = null;
+                    try {
+                        response = client.execute(httpget);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (response != null) {
+                        StatusLine line = response.getStatusLine();
+                        Log.i("ISCHACK", "complete: " + line);
+                        // return code indicates upload failed so throw exception
+                        if (line.getStatusCode() < 200 || line.getStatusCode() >= 300) {
+                            Log.e("ISCHACK", "Failed to get image with error code: " + line.getStatusCode());
+                            return null;
+                        } else {
+
+                            String jsontext = "";
+                            try {
+                                InputStream is = response.getEntity().getContent();
+                                java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+                                jsontext = s.hasNext() ? s.next() : "";
+                            } catch (Exception e) {
+                                Log.wtf("Read", "Error");
+                            }
+
+                            try {
+                                JSONArray array = new JSONArray(jsontext);
+
+                                for (int i = 0; i < array.length(); i++) {
+                                    JSONObject obj = array.getJSONObject(i);
+                                    JSONObject gameJson = obj.getJSONObject("game");
+
+                                    Game game = Game.createFromJson(gameJson);
+                                    String score = obj.getString("score");
+
+                                    scores.add(new GameScore(game, score));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    return scores;
+                }
+
+                @Override
+                protected void onPostExecute(List<GameScore> gameScores) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content, ResultsFragment.getInstance(gameScores), ResultsFragment.class.getName()).commit();
+                }
+            }.execute();
+        }
+
+        for (String key : bundle.keySet()) {
+            Object value = bundle.get(key);
+            Log.d("ISCHACK", String.format("%s %s (%s)", key,
+                    value.toString(), value.getClass().getName()));
+        }
+
+        Intent i = getIntent();
+        IntentFilter filter = new IntentFilter();
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        filter.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, new IntentFilter[]{filter}, NfcUtils.techList);
+        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(i.getAction())) {
+            Toast.makeText(this, NfcUtils.ByteArrayToHexString(i.getByteArrayExtra(NfcAdapter.EXTRA_ID)), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -79,6 +197,7 @@ public class MainActivity extends FragmentActivity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
+            Log.d("ISCHACK", "Item ("+position+") on grid was clicked.");
             selectItem(position);
         }
     }
@@ -121,7 +240,7 @@ public class MainActivity extends FragmentActivity {
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(android.R.id.content, fragment)
+                    .replace(R.id.content, fragment)
                     .commit();
 
             // Highlight the selected item, update the title, and close the drawer
@@ -140,7 +259,7 @@ public class MainActivity extends FragmentActivity {
 
         // Set the adapter for the list view
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, new String[] {"Login", "Grid"}));
+                android.R.layout.simple_list_item_1, new String[] {"Volunteer Login", "Games"}));
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 

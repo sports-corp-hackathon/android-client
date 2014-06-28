@@ -14,19 +14,13 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.github.ischack.android.fragments.gamefragment.GameFragment;
+import com.github.ischack.android.helpers.NfcUtils;
 import com.github.ischack.android.model.Game;
 
 public class GameActivity extends FragmentActivity {
 
     Game game;
     GameFragment gameFragment;
-
-    private final String[][] techList = new String[][] {
-            new String[] {
-                    NfcV.class.getName(),
-                    NdefFormatable.class.getName()
-            }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,26 +32,7 @@ public class GameActivity extends FragmentActivity {
         gameFragment = GameFragment.newInstance(game);
         getSupportFragmentManager().beginTransaction().add(R.id.content, gameFragment, GameFragment.class.getName()).commit();
 
-
-    }
-
-    private String ByteArrayToHexString(byte [] inarray) { //converts byte arrays to string
-        if(inarray == null)
-            return "null";
-
-        int i, j, in;
-        String [] hex = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"};
-        String out= "";
-
-        for(j = inarray.length - 1 ; j >= 0 ; j--)
-        {
-            in = (int) inarray[j] & 0xff;
-            i = (in >> 4) & 0x0f;
-            out += hex[i];
-            i = in & 0x0f;
-            out += hex[i];
-        }
-        return out;
+        getActionBar().setTitle(game.getName());
     }
 
     @Override
@@ -68,9 +43,9 @@ public class GameActivity extends FragmentActivity {
         Bundle bundle = getIntent().getExtras();
 
         if(bundle.containsKey(NfcAdapter.EXTRA_ID)) {
-            Log.d("NFC", ByteArrayToHexString(bundle.getByteArray(NfcAdapter.EXTRA_ID)));
+            Log.d("NFC", NfcUtils.ByteArrayToHexString(bundle.getByteArray(NfcAdapter.EXTRA_ID)));
 
-            gameFragment.promptScore();
+            gameFragment.promptScore( NfcUtils.ByteArrayToHexString(bundle.getByteArray(NfcAdapter.EXTRA_ID)));
         }
 
 
@@ -86,9 +61,9 @@ public class GameActivity extends FragmentActivity {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         filter.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, new IntentFilter[]{filter}, this.techList);
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, new IntentFilter[]{filter},  NfcUtils.techList);
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(i.getAction())) {
-            Toast.makeText(this, ByteArrayToHexString(i.getByteArrayExtra(NfcAdapter.EXTRA_ID)), Toast.LENGTH_LONG).show();
+            Toast.makeText(this,  NfcUtils.ByteArrayToHexString(i.getByteArrayExtra(NfcAdapter.EXTRA_ID)), Toast.LENGTH_LONG).show();
         }
     }
 

@@ -7,6 +7,9 @@ import android.os.Parcelable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.ref.WeakReference;
 import java.lang.reflect.ParameterizedType;
 
@@ -16,6 +19,16 @@ import java.lang.reflect.ParameterizedType;
 public class Game implements Parcelable {
 
 
+    public static Game createFromJson(JSONObject obj) throws JSONException {
+        Game game = new Game();
+        game.setName(obj.getString("name"));
+        game.setImageUrl(Uri.parse(obj.getString("gamePic")));
+        game.setRules(obj.getString("rules"));
+        game.setScoreType(ScoreType.valueOf(obj.getString("scoreType").toUpperCase()));
+        game.setInformation(obj.getString("info"));
+
+        return game;
+    }
 
     public static enum ScoreType {
         TIME, RANK, BOOL, DISTANCE, COUNT;
@@ -80,6 +93,10 @@ public class Game implements Parcelable {
 
     public Uri getImageUrl() {
         return imageUrl;
+    }
+
+    public String getId() {
+        return Integer.toString(name.hashCode());
     }
 
     @Override

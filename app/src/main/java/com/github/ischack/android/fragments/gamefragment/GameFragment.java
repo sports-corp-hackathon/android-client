@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -27,6 +28,20 @@ import com.github.ischack.android.fragments.FragmentTabsFragmentSupport;
 import com.github.ischack.android.helpers.GameDownloadHelper;
 import com.github.ischack.android.model.Game;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link GameFragment#newInstance} factory method to
@@ -41,7 +56,7 @@ public class GameFragment extends Fragment {
     private Game game;
 
     private boolean promptingScore = false;
-
+    private String currentUserId;
 
 
     /**
@@ -103,7 +118,8 @@ public class GameFragment extends Fragment {
 
 
 
-    public void promptScore() {
+    public void promptScore(String userId) {
+        this.currentUserId = userId;
         if(!promptingScore) {
             for (Fragment f : getActivity().getSupportFragmentManager().getFragments()) {
                 if (f instanceof DialogFragment)
@@ -120,6 +136,63 @@ public class GameFragment extends Fragment {
         getChildFragmentManager().beginTransaction().add(R.id.content, frag, FragmentTabsFragmentSupport.class.getName()).commit();
     }
 
+    interface onPublishScoreCallback {
+        public void onSuccess();
+        public void onFail(int code);
+    }
+
+    private void publishScoreNonBlocking(final String score, final onPublishScoreCallback callback) {
+
+        new AsyncTask<Game, Void, Integer>() {
+
+            @Override
+            protected Integer doInBackground(Game... params) {
+
+                HttpPost httpPost = new HttpPost("http://devnull-as-a-service.com/dev/null");
+
+                JSONObject jo = new JSONObject();
+
+                try {
+                    jo.put("playerId", currentUserId);
+                    jo.put("score", score);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    httpPost.setEntity(new StringEntity(jo.toString()));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                HttpClient client = new DefaultHttpClient();
+
+                HttpResponse response = null;
+                try {
+                    response = client.execute(httpPost);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(response != null) {
+                    StatusLine line = response.getStatusLine();
+                    Log.i("ISCHACK", "complete: " + line);
+                    // return code indicates upload failed so throw exception
+                    return line.getStatusCode();
+                }
+
+                return -1;
+            }
+
+            @Override
+            protected void onPostExecute(Integer integer) {
+                if( callback != null) {
+                    if (integer < 200 || integer > 299)
+                        callback.onFail(integer);
+                    else
+                        callback.onSuccess();
+                }
+            }
+        }.execute(game);
+    }
 
     public void showDialogFragmentForGame(Game game)
     {
@@ -132,6 +205,7 @@ public class GameFragment extends Fragment {
                         .addHmsPickerDialogHandler(new HmsPickerDialogFragment.HmsPickerDialogHandler() {
                             @Override
                             public void onDialogHmsSet(int i, int i2, int i3, int i4) {
+                                publishScoreNonBlocking("" + i + " " + i2 + " " + i3 + " " + i4, null);
                             }
                         })
                         .setStyleResId(R.style.BetterPickersDialogFragment);
@@ -156,6 +230,7 @@ public class GameFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         //TODO: Send score.
+                        publishScoreNonBlocking(Integer.toString(np.getValue()), null);
                         promptingScore = false;
                         d2.dismiss();
                     }
@@ -176,12 +251,16 @@ public class GameFragment extends Fragment {
                 builder.setMessage("Did this player complete the game?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                publishScoreNonBlocking("yes", null);
+
                                 promptingScore = false;
                                 // FIRE ZE MISSILES!
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                publishScoreNonBlocking("no", null);
+
                                 promptingScore = false;
                                 // User cancelled the dialog
                             }
@@ -211,7 +290,7 @@ public class GameFragment extends Fragment {
                 {
                     @Override
                     public void onClick(View v) {
-                        //TODO: Send score.
+                        publishScoreNonBlocking(npft + "ft" + npin.getValue() + "in", null);
                         promptingScore = false;
                         d.dismiss();
                     }
@@ -243,7 +322,7 @@ public class GameFragment extends Fragment {
                 {
                     @Override
                     public void onClick(View v) {
-                        //TODO: Send score.
+                        publishScoreNonBlocking(Integer.toString(_np.getValue()), null);
                         promptingScore = false;
                         d3.dismiss();
                     }
