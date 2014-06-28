@@ -2,7 +2,9 @@ package com.github.ischack.android.fragments.gamefragment;
 
 
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -111,8 +113,54 @@ public class GameFragment extends Fragment {
 
                 break;
             case RANK:
+                promptingScore = true;
+                final Dialog d2 = new Dialog(getActivity());
+                d2.setTitle("Enter score for this player");
+                d2.setContentView(R.layout.picker_count);
+                Button b1 = (Button) d2.findViewById(R.id.button1);
+                Button b2 = (Button) d2.findViewById(R.id.button2);
+                final NumberPicker np = (NumberPicker) d2.findViewById(R.id.numberPicker1);
+                np.setMaxValue(100);
+                np.setMinValue(0);
+                np.setWrapSelectorWheel(false);
+                //np.setOnValueChangedListener(this);
+                b1.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v) {
+                        //TODO: Send score.
+                        promptingScore = false;
+                        d2.dismiss();
+                    }
+                });
+                b2.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v) {
+                        promptingScore = false;
+                        d2.dismiss();
+                    }
+                });
+                d2.show();
                 break;
             case BOOL:
+                promptingScore = true;
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Did this player complete the game?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                promptingScore = false;
+                                // FIRE ZE MISSILES!
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                promptingScore = false;
+                                // User cancelled the dialog
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                builder.create().show();
                 break;
             case DISTANCE:
                 promptingScore = true;
@@ -154,34 +202,34 @@ public class GameFragment extends Fragment {
 
             case COUNT:
                 promptingScore = true;
-                final Dialog d2 = new Dialog(getActivity());
-                d2.setTitle("Enter score for this player");
-                d2.setContentView(R.layout.picker_count);
-                Button b1 = (Button) d2.findViewById(R.id.button1);
-                Button b2 = (Button) d2.findViewById(R.id.button2);
-                final NumberPicker np = (NumberPicker) d2.findViewById(R.id.numberPicker1);
-                np.setMaxValue(100);
-                np.setMinValue(0);
-                np.setWrapSelectorWheel(false);
+                final Dialog d3 = new Dialog(getActivity());
+                d3.setTitle("Enter score for this player");
+                d3.setContentView(R.layout.picker_count);
+                Button _b3 = (Button) d3.findViewById(R.id.button1);
+                Button _b4 = (Button) d3.findViewById(R.id.button2);
+                final NumberPicker _np = (NumberPicker) d3.findViewById(R.id.numberPicker1);
+                _np.setMaxValue(100);
+                _np.setMinValue(0);
+                _np.setWrapSelectorWheel(false);
                 //np.setOnValueChangedListener(this);
-                b1.setOnClickListener(new View.OnClickListener()
+                _b3.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
                     public void onClick(View v) {
                         //TODO: Send score.
                         promptingScore = false;
-                        d2.dismiss();
+                        d3.dismiss();
                     }
                 });
-                b2.setOnClickListener(new View.OnClickListener()
+                _b4.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
                     public void onClick(View v) {
                         promptingScore = false;
-                        d2.dismiss();
+                        d3.dismiss();
                     }
                 });
-                d2.show();
+                d3.show();
                 break;
 
         }

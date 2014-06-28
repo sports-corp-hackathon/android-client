@@ -88,7 +88,7 @@ public class GetGameImageTask extends AsyncTask<List<Game>, Integer, Void> {
             final Game g = new Game();
             g.setName("Game " + i);
 
-            switch(i % 3) {
+            switch(i % 5) {
                 case 0:
                     g.setScoreType(Game.ScoreType.COUNT);
                     break;
@@ -97,6 +97,12 @@ public class GetGameImageTask extends AsyncTask<List<Game>, Integer, Void> {
                     break;
                 case 2:
                     g.setScoreType(Game.ScoreType.DISTANCE);
+                    break;
+                case 3:
+                    g.setScoreType(Game.ScoreType.BOOL);
+                    break;
+                case 4:
+                    g.setScoreType(Game.ScoreType.RANK);
                     break;
             }
 
