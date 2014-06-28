@@ -1,6 +1,7 @@
 package com.github.ischack.android.adapters;
 
 import android.content.Context;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,25 +24,31 @@ public class GameGridListAdapter extends ArrayAdapter<Game> {
         super(context, resource);
     }
 
+
+    @Override
+    public long getItemId(int position) {
+        return getItem(position).getName().hashCode();
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v;
-        Game.ViewHolder viewHolder;
-
-        if(convertView != null) {
-            v = convertView;
-            viewHolder = (Game.ViewHolder) v.getTag();
-        } else {
+       // Game.ViewHolder viewHolder;
+//
+//        if(convertView != null) {
+//            viewHolder = (Game.ViewHolder) convertView.getTag();
+//            v = convertView;
+//        } else {
             v = getInflater().inflate(R.layout.game_grid_item, parent, false);
-            viewHolder = new Game.ViewHolder((ImageView) v.findViewById(R.id.gameImage), (TextView) v.findViewById(R.id.gameName));
-            v.setTag(viewHolder);
-        }
+            //viewHolder = new Game.ViewHolder((ImageView) v.findViewById(R.id.gameImage), (TextView) v.findViewById(R.id.gameName), getItem(position));
+            //v.setTag(viewHolder);
+//        }
 
-        TextView name = viewHolder.getTextView();
+        TextView name = (TextView) v.findViewById(R.id.gameName);
 
         name.setText(getItem(position).getName());
 
-        ImageView iv = viewHolder.getImageView();
+        ImageView iv = (ImageView) v.findViewById(R.id.gameImage);
 
         iv.setImageBitmap(getItem(position).getImage());
 

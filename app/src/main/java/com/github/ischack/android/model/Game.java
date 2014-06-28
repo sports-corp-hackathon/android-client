@@ -14,12 +14,11 @@ public class Game {
 
     private String name;
     private Uri imageUrl;
-    private WeakReference<Bitmap> image;
+    private Bitmap image;
     private String rules;
     private String information;
 
     public Game() {
-        image = new WeakReference<Bitmap>(null);
         name = "<GAME NAME>";
     }
 
@@ -33,12 +32,11 @@ public class Game {
 
     public Bitmap getImage()
     {
-        Bitmap bitmap = image.get();
-        return bitmap;
+        return image;
     }
 
     public void setImage(Bitmap b) {
-        image = new WeakReference<Bitmap>(b);
+        image = b;
     }
 
     public String getRules() {
@@ -60,10 +58,13 @@ public class Game {
     public static class ViewHolder {
         ImageView iv;
         TextView tv;
+        private Game g;
+
         
-        public ViewHolder(ImageView iv, TextView tv) {
+        public ViewHolder(ImageView iv, TextView tv, Game g) {
             this.tv = tv;
             this.iv = iv;
+            this.g = g;
         }
 
         public ImageView getImageView() {
@@ -72,6 +73,14 @@ public class Game {
 
         public TextView getTextView() {
             return tv;
+        }
+
+        public Game getGame() {
+            return g;
+        }
+
+        public void setGame(Game g) {
+            this.g = g;
         }
     }
 }

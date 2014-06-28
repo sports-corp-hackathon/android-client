@@ -4,7 +4,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <ImageView
         android:id="@+id/gameImage"
         android:layout_width="wrap_content"
@@ -21,13 +20,14 @@
         android:layout_alignLeft="@+id/gameImage"
         android:layout_alignRight="@+id/gameImage"
         android:layout_alignBottom="@+id/gameImage"
-        android:background="#3FFFFFFF">
+        android:background="#FFFFFFFF" >
 
         <TextView
             android:id="@+id/gameName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hello World"
+            android:textColor="@android:color/black"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             />

@@ -46,14 +46,13 @@ public class GetGameImageTask extends AsyncTask<List<Game>, Integer, Void> {
     @Override
     protected Void doInBackground(List<Game>... games) {
 
-        for(int i = 0; i < 20; i++) {
+        for(int i = 1; i <= 20; i++) {
 
             Bitmap bm = null;
 
-            HttpGet httpget = new HttpGet("http://placekitten.com/g/800/" + (500 + new Random().nextInt(400)));
+            HttpGet httpget = new HttpGet("http://placekitten.com/g/540/" + (500 + new Random().nextInt(400)));
 
             HttpClient client = new DefaultHttpClient();
-
 
             HttpResponse response = null;
             try {
@@ -63,7 +62,7 @@ public class GetGameImageTask extends AsyncTask<List<Game>, Integer, Void> {
             }
             if(response != null) {
                 StatusLine line = response.getStatusLine();
-                Log.i("Cloudmonitor", "complete: " + line);
+                Log.i("ISCHACK", "complete: " + line);
                 // return code indicates upload failed so throw exception
                 if (line.getStatusCode() < 200 || line.getStatusCode() >= 300) {
                     Log.e("ISCHACK", "Failed to get image with error code: " + line.getStatusCode());
@@ -98,6 +97,7 @@ public class GetGameImageTask extends AsyncTask<List<Game>, Integer, Void> {
             c.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Log.d("ISCHACK", "Added game: " + g.getName());
                     adapter.add(g);
                     adapter.notifyDataSetChanged();
                 }
