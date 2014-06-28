@@ -40,6 +40,8 @@ public class GameGridListAdapter extends ArrayAdapter<Game> {
 //            v = convertView;
 //        } else {
             v = getInflater().inflate(R.layout.game_grid_item, parent, false);
+
+        v.setTag(getItem(position));
             //viewHolder = new Game.ViewHolder((ImageView) v.findViewById(R.id.gameImage), (TextView) v.findViewById(R.id.gameName), getItem(position));
             //v.setTag(viewHolder);
 //        }

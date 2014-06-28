@@ -55,33 +55,5 @@ public class Game {
         this.information = information;
     }
 
-    public static class ViewHolder {
-        ImageView iv;
-        TextView tv;
-        private Game g;
-
-        
-        public ViewHolder(ImageView iv, TextView tv, Game g) {
-            this.tv = tv;
-            this.iv = iv;
-            this.g = g;
-        }
-
-        public ImageView getImageView() {
-            return iv;
-        }
-
-        public TextView getTextView() {
-            return tv;
-        }
-
-        public Game getGame() {
-            return g;
-        }
-
-        public void setGame(Game g) {
-            this.g = g;
-        }
-    }
 }
 

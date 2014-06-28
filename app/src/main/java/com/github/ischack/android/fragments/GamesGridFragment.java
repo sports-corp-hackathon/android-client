@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.etsy.android.grid.HeaderViewListAdapter;
 import com.etsy.android.grid.StaggeredGridView;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 /**
  *
  */
-public class GamesGridFragment extends Fragment {
+public class GamesGridFragment extends Fragment implements AdapterView.OnItemClickListener{
 
     StaggeredGridView gridView;
 
@@ -47,6 +49,15 @@ public class GamesGridFragment extends Fragment {
         mAdapter = new GameGridListAdapter(getActivity(), 0);
         gridView.setAdapter( mAdapter);
 
+        gridView.setOnItemClickListener(this);
+
         new GetGameImageTask(mAdapter, getActivity()).execute(new ArrayList<Game>());
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Game game = (Game) view.getTag();
+
+        Toast.makeText(getActivity(), "Clicked: " + game.getName(), Toast.LENGTH_LONG).show();
     }
 }
