@@ -1,5 +1,6 @@
 package com.github.ischack.android.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 
 import com.etsy.android.grid.HeaderViewListAdapter;
 import com.etsy.android.grid.StaggeredGridView;
+import com.github.ischack.android.GameActivity;
 import com.github.ischack.android.R;
 import com.github.ischack.android.adapters.GameGridListAdapter;
 import com.github.ischack.android.model.Game;
@@ -60,6 +62,9 @@ public class GamesGridFragment extends Fragment implements AdapterView.OnItemCli
 
         Toast.makeText(getActivity(), "Clicked: " + game.getName(), Toast.LENGTH_LONG).show();
 
-        getActivity().getSupportFragmentManager().beginTransaction().addToBackStack(GameFragment.class.getName()).replace(android.R.id.content, GameFragment.newInstance(game), GameFragment.class.getName()).commit();
+        game.setImage(null);
+        Intent gameIntent = new Intent(getActivity(), GameActivity.class);
+        gameIntent.putExtra("game", game);
+        startActivity(gameIntent);
     }
 }
