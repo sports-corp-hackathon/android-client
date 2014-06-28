@@ -65,26 +65,33 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        Log.e("ISCHACK", "New Intent | Action: " + intent.getAction());
+    }
 
+    @Override
+    protected void onResume() {
         super.onResume();
         Log.e("ISCHACK", "Action: " + getIntent().getAction());
 
         Bundle bundle = getIntent().getExtras();
 
-        if(bundle.containsKey(NfcAdapter.EXTRA_ID)) {
+        if(bundle != null && bundle.containsKey(NfcAdapter.EXTRA_ID)) {
             Log.d("NFC", NfcUtils.ByteArrayToHexString(bundle.getByteArray(NfcAdapter.EXTRA_ID)));
 
+            Toast.makeText(this, "Getting scores" , Toast.LENGTH_LONG).show();
+
             //TODO: Get the scores for the user here.
-            new AsyncTask<Void, Void, List<GameScore>>() {
+            new AsyncTask<Void, Void, ArrayList<GameScore>>() {
 
                 @Override
-                protected List<GameScore> doInBackground(Void... params) {
+                protected ArrayList<GameScore> doInBackground(Void... params) {
 
-                    List<GameScore> scores = new ArrayList<GameScore>();
+                    ArrayList<GameScore> scores = new ArrayList<GameScore>();
 
-                    HttpGet httpget = new HttpGet("http://echo.jsontest.com/game/object/score/124134");
+                    HttpGet httpget = new HttpGet("http://isc.mhoc.co:8080/isc/event/78f9075c-f81c-42fe-9d50-63e666b5450d/games");
 
                     HttpClient client = new DefaultHttpClient();
 
@@ -133,16 +140,10 @@ public class MainActivity extends FragmentActivity {
                 }
 
                 @Override
-                protected void onPostExecute(List<GameScore> gameScores) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.content, ResultsFragment.getInstance(gameScores), ResultsFragment.class.getName()).commit();
+                protected void onPostExecute(ArrayList<GameScore> gameScores) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content, ResultsFragment.newInstance(gameScores), ResultsFragment.class.getName()).commit();
                 }
-            }.execute();
-        }
-
-        for (String key : bundle.keySet()) {
-            Object value = bundle.get(key);
-            Log.d("ISCHACK", String.format("%s %s (%s)", key,
-                    value.toString(), value.getClass().getName()));
+            };//.execute();
         }
 
         Intent i = getIntent();
