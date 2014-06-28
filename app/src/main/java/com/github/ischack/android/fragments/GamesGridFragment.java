@@ -59,5 +59,7 @@ public class GamesGridFragment extends Fragment implements AdapterView.OnItemCli
         Game game = (Game) view.getTag();
 
         Toast.makeText(getActivity(), "Clicked: " + game.getName(), Toast.LENGTH_LONG).show();
+
+        getActivity().getSupportFragmentManager().beginTransaction().addToBackStack(GameFragment.class.getName()).replace(android.R.id.content, GameFragment.newInstance(game), GameFragment.class.getName()).commit();
     }
 }
