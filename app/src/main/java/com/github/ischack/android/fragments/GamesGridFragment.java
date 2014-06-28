@@ -62,7 +62,6 @@ public class GamesGridFragment extends Fragment implements AdapterView.OnItemCli
 
         Toast.makeText(getActivity(), "Clicked: " + game.getName(), Toast.LENGTH_LONG).show();
 
-        game.setImage(null);
         Intent gameIntent = new Intent(getActivity(), GameActivity.class);
         gameIntent.putExtra("game", game);
         startActivity(gameIntent);

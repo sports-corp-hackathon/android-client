@@ -1,4 +1,4 @@
-package com.github.ischack.android.fragments;
+package com.github.ischack.android.fragments.gamefragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,10 +11,10 @@ import com.github.ischack.android.R;
 /**
  * Created by david on 6/28/14.
  */
-public class LeaderboardFragment extends Fragment {
+public class InfoFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_leaderboard, container, false);
+        return inflater.inflate(R.layout.fragment_text_content, container, false);
     }
 }

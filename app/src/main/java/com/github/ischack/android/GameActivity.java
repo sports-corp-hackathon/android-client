@@ -1,35 +1,25 @@
 package com.github.ischack.android;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
-import android.nfc.tech.IsoDep;
-import android.nfc.tech.MifareClassic;
-import android.nfc.tech.MifareUltralight;
-import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
-import android.nfc.tech.NfcA;
-import android.nfc.tech.NfcB;
-import android.nfc.tech.NfcF;
 import android.nfc.tech.NfcV;
-import android.nfc.tech.TagTechnology;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.ischack.android.R;
-import com.github.ischack.android.fragments.GameFragment;
+import com.github.ischack.android.fragments.gamefragment.GameFragment;
 import com.github.ischack.android.model.Game;
 
 public class GameActivity extends FragmentActivity {
 
     Game game;
+    GameFragment gameFragment;
 
     private final String[][] techList = new String[][] {
             new String[] {
@@ -45,7 +35,8 @@ public class GameActivity extends FragmentActivity {
 
         game = getIntent().getExtras().getParcelable("game");
 
-        getSupportFragmentManager().beginTransaction().add(R.id.content, GameFragment.newInstance(game), GameFragment.class.getName()).commit();
+        gameFragment = GameFragment.newInstance(game);
+        getSupportFragmentManager().beginTransaction().add(R.id.content, gameFragment, GameFragment.class.getName()).commit();
 
 
     }
@@ -76,8 +67,12 @@ public class GameActivity extends FragmentActivity {
 
         Bundle bundle = getIntent().getExtras();
 
-        if(bundle.containsKey(NfcAdapter.EXTRA_ID))
+        if(bundle.containsKey(NfcAdapter.EXTRA_ID)) {
             Log.d("NFC", ByteArrayToHexString(bundle.getByteArray(NfcAdapter.EXTRA_ID)));
+
+            gameFragment.promptScore();
+        }
+
 
 
         for (String key : bundle.keySet()) {

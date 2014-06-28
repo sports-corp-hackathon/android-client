@@ -45,6 +45,7 @@ public class GetGameImageTask extends AsyncTask<List<Game>, Integer, Void> {
 
     @Override
     protected Void doInBackground(List<Game>... games) {
+        //TODO: Make this iterate over given game objects in list.
 
         for(int i = 1; i <= 20; i++) {
 
@@ -84,9 +85,22 @@ public class GetGameImageTask extends AsyncTask<List<Game>, Integer, Void> {
                     }
                 }
             }
-
             final Game g = new Game();
             g.setName("Game " + i);
+
+            switch(i % 3) {
+                case 0:
+                    g.setScoreType(Game.ScoreType.COUNT);
+                    break;
+                case 1:
+                    g.setScoreType(Game.ScoreType.TIME);
+                    break;
+                case 2:
+                    g.setScoreType(Game.ScoreType.DISTANCE);
+                    break;
+            }
+
+
             g.setInformation("This is a game");
             g.setImage(bm);
 

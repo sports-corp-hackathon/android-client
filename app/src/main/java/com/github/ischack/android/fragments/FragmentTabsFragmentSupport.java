@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.ischack.android.R;
+import com.github.ischack.android.fragments.gamefragment.InfoFragment;
+import com.github.ischack.android.fragments.gamefragment.LeaderboardFragment;
+import com.github.ischack.android.fragments.gamefragment.RulesFragment;
 
 public class FragmentTabsFragmentSupport extends Fragment {
     private FragmentTabHost mTabHost;
