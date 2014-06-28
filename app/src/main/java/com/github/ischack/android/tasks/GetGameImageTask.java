@@ -11,7 +11,18 @@ import com.github.ischack.android.R;
 import com.github.ischack.android.adapters.GameGridListAdapter;
 import com.github.ischack.android.model.Game;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHttpRequest;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Handler;
 
 /**
@@ -35,10 +46,45 @@ public class GetGameImageTask extends AsyncTask<List<Game>, Integer, Void> {
     @Override
     protected Void doInBackground(List<Game>... games) {
 
-        int[] res = new int[] {R.drawable.game_1, R.drawable.game_2, R.drawable.game_3, R.drawable.game_4, R.drawable.game_5, R.drawable.game_1, R.drawable.game_3, R.drawable.game_4, R.drawable.game_5 };
+        for(int i = 0; i < 20; i++) {
 
-        for(int i = 0; i < res.length; i++) {
-            Bitmap bm = BitmapFactory.decodeResource(c.getResources(), res[i]);
+            Bitmap bm = null;
+
+            HttpGet httpget = new HttpGet("http://placekitten.com/g/800/" + (500 + new Random().nextInt(400)));
+
+            HttpClient client = new DefaultHttpClient();
+
+
+            HttpResponse response = null;
+            try {
+                response = client.execute(httpget);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(response != null) {
+                StatusLine line = response.getStatusLine();
+                Log.i("Cloudmonitor", "complete: " + line);
+                // return code indicates upload failed so throw exception
+                if (line.getStatusCode() < 200 || line.getStatusCode() >= 300) {
+                    Log.e("ISCHACK", "Failed to get image with error code: " + line.getStatusCode());
+                    return null; //TODO: Add an error dialog for error.
+                } else {
+
+                    try {
+                        // A Simple JSON Response Read
+                        InputStream instream = response.getEntity().getContent();
+
+                        bm = BitmapFactory.decodeStream(instream);
+
+                        instream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if(bm == null)
+                            bm = BitmapFactory.decodeResource(c.getResources(), R.drawable.ic_launcher);
+                    }
+                }
+            }
 
             final Game g = new Game();
             g.setName("Game " + i);
@@ -56,9 +102,7 @@ public class GetGameImageTask extends AsyncTask<List<Game>, Integer, Void> {
                     adapter.notifyDataSetChanged();
                 }
             });
-
         }
-
         return null;
     }
 }

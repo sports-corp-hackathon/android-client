@@ -23,7 +23,6 @@ public class GameGridListAdapter extends ArrayAdapter<Game> {
         super(context, resource);
     }
 
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v;
@@ -39,15 +38,6 @@ public class GameGridListAdapter extends ArrayAdapter<Game> {
         }
 
         TextView name = viewHolder.getTextView();
-
-        if( name == null )
-            Log.wtf("ISCHACK", "tv is null");
-
-        if( getItem(position) == null )
-            Log.wtf("ISCHACK", "item is null");
-
-        if( getItem(position).getName() == null )
-            Log.wtf("ISCHACK", "name is null");
 
         name.setText(getItem(position).getName());
 

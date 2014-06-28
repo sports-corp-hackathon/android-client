@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.etsy.android.grid.HeaderViewListAdapter;
 import com.etsy.android.grid.StaggeredGridView;
 import com.github.ischack.android.R;
 import com.github.ischack.android.adapters.GameGridListAdapter;
@@ -46,9 +47,6 @@ public class GamesGridFragment extends Fragment {
         mAdapter = new GameGridListAdapter(getActivity(), 0);
         gridView.setAdapter( mAdapter);
 
-
-
         new GetGameImageTask(mAdapter, getActivity()).execute(new ArrayList<Game>());
-
     }
 }
